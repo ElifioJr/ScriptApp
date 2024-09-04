@@ -7,4 +7,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="LogoFTI.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="LogoFTI.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.102.3" />
+    <PackageReference Include="DocX" Version="3.0.1" />
+    <PackageReference Include="EPPlus" Version="7.3.0" />
+  </ItemGroup>
+
 </Project>
