@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="img.png" />
     <None Remove="LogoFTI.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="LogoFTI.png">
+    <EmbeddedResource Include="img.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
