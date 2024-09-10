@@ -136,18 +136,27 @@ class Program
 
                 foreach (var item in row.ListaDadosExcel)
                 {
-                    var table = document.AddTable(3, 1);
+                    var table = document.AddTable(4, 1);
                     table.Alignment = Xceed.Document.NET.Alignment.center;
                     table.Rows[0].Cells[0].Paragraphs[0].Append("Macro Cenário: " + item.macroCenario).Font("Calibri");
                     table.Rows[1].Cells[0].Paragraphs[0].Append("Processo: " + item.processo);
-                    table.Rows[2].Cells[0].Paragraphs[0].Append("Resultado Esperado: " + item.resultadoEsperado);
+                    table.Rows[2].Cells[0].Paragraphs[0].Append("Acao: " + item.acao);
+                    table.Rows[3].Cells[0].Paragraphs[0].Append("Resultado Esperado: " + item.resultadoEsperado);
                     document.InsertParagraph().InsertTableAfterSelf(table);
                     document.InsertParagraph();
                 }
 
             }
+            try
+            {
+                document.Save();
+                Console.WriteLine("ARQUIVO SALVO COM SUCESSO !");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERRO AO SALVAR O ARQUIVO");
+            }
 
-            document.Save();
         }
     }
 }
