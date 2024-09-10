@@ -6,6 +6,7 @@ using OfficeOpenXml;
 using ScriptApp;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Linq;
+using System.Collections.Generic;
 
 class Program
 {
@@ -28,16 +29,16 @@ class Program
 
         var img = "img.png";
 
-        List<DadosExcel> listaDadosExcel = new List<DadosExcel>();
+        List<DadosExcel> listaDadosExcelAuxiliar = new List<DadosExcel>();
         List<DadosWord> listaDadosWord = new List<DadosWord>();
-        
-        using (ExcelPackage package = new ExcelPackage(excelFile)) 
+
+        using (ExcelPackage package = new ExcelPackage(excelFile))
         {
             ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
             int rowCount = worksheet.Dimension.Rows;
             int colCount = worksheet.Dimension.Columns;
 
-            IDictionary<string, int> listaTopico = new Dictionary<string, int>();
+            IDictionary<string, int> dicionarioTopico = new Dictionary<string, int>();
 
             int linhasNulas = 0;
             for (int row = 3; row < rowCount; row++)
@@ -51,12 +52,13 @@ class Program
 
                     DadosWord dadosWord = new()
                     {
-                        Topico = listaTopico.Aggregate((x, y) => x.Value > y.Value ? x : y).Key,
-                        ListaDadosExcel = listaDadosExcel
+                        Topico = dicionarioTopico.Aggregate((topico1, topico2) => topico1.Value > topico2.Value ? topico1 : topico2).Key,
+                        ListaDadosExcel = new List<DadosExcel>(listaDadosExcelAuxiliar),
                     };
-
                     listaDadosWord.Add(dadosWord);
-                    listaDadosExcel.Clear();
+                    listaDadosExcelAuxiliar.Clear();
+
+                    dicionarioTopico.Clear();
 
                     continue;
                 }
@@ -70,6 +72,15 @@ class Program
                 string action = worksheet.Cells[row, 5]?.Value?.ToString();
                 string resultado = worksheet.Cells[row, 8]?.Value?.ToString();
 
+                if (dicionarioTopico.ContainsKey(macro))
+                {
+                    dicionarioTopico[macro]++;
+                }
+                else
+                {
+                    dicionarioTopico[macro] = 1;
+                }
+
                 DadosExcel dadosExcel = new DadosExcel
                 {
                     macroCenario = macro,
@@ -78,19 +89,7 @@ class Program
                     acao = action,
                     numeroStep = step
                 };
-                listaDadosExcel.Add(dadosExcel);
-
-                foreach (var item in listaDadosExcel)
-                {
-                    if (listaTopico.ContainsKey(item.macroCenario))
-                    {
-                        listaTopico[item.macroCenario]++;
-                    }
-                    else
-                    {
-                        listaTopico[item.macroCenario] = 1;
-                    }
-                }
+                listaDadosExcelAuxiliar.Add(dadosExcel);
             }
         }
 
@@ -125,19 +124,22 @@ class Program
 
             document.InsertParagraph().InsertPageBreakAfterSelf();
 
-            foreach (var row in listaDadosExcel) 
+            foreach (var row in listaDadosWord)
             {
 
-                var titulo = document.InsertParagraph(row.acao);
+                var titulo = document.InsertParagraph(row.Topico);
                 titulo.StyleId = "Heading1";
-                var table = document.AddTable(3, 1);
 
-                table.Alignment = Xceed.Document.NET.Alignment.center;
-                table.Rows[0].Cells[0].Paragraphs[0].Append("Macro Cenário: " + row.macroCenario).Font("Calibri");
-                table.Rows[1].Cells[0].Paragraphs[0].Append("Processo: " + row.processo);
-                table.Rows[2].Cells[0].Paragraphs[0].Append("Resultado Esperado: " + row.resultadoEsperado);
-                document.InsertParagraph().InsertTableAfterSelf(table);
-                document.InsertParagraph();
+                foreach (var item in row.ListaDadosExcel)
+                {
+                    var table = document.AddTable(3, 1);
+                    table.Alignment = Xceed.Document.NET.Alignment.center;
+                    table.Rows[0].Cells[0].Paragraphs[0].Append("Macro Cenário: " + item.macroCenario).Font("Calibri");
+                    table.Rows[1].Cells[0].Paragraphs[0].Append("Processo: " + item.processo);
+                    table.Rows[2].Cells[0].Paragraphs[0].Append("Resultado Esperado: " + item.resultadoEsperado);
+                    document.InsertParagraph().InsertTableAfterSelf(table);
+                    document.InsertParagraph();
+                }
 
             }
 
