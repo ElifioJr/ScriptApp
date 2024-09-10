@@ -14,15 +14,20 @@ class Program
     {
         ExcelPackage.LicenseContext = LicenseContext.Commercial;
 
+        Console.WriteLine("Informe o caminho do arquivo Excel");
+        var excelFile = Console.ReadLine();
 
-        //Console.WriteLine("Informe o caminho do arquivo .xlsx");
-        var excelFile = "C:\\Users\\Elifio\\Desktop\\ScriptTesteApp\\ArqTeste.xlsx";
+        Console.WriteLine("--------------- /// ---------------");
 
-        //Console.WriteLine("Informe o caminho do arquivo Word");
-        var documentoNovo = "C:\\Users\\Elifio\\Desktop\\ScriptTesteApp\\Teste.docx";
+        Console.WriteLine("Informe o caminho do arquivo Word");
+        var documentoNovo = Console.ReadLine();
+
+        Console.WriteLine("--------------- /// ---------------");
 
         Console.WriteLine("Data inicio");
         var dataInicio = Console.ReadLine();
+
+        Console.WriteLine("--------------- /// ---------------");
 
         Console.WriteLine("Data Fim");
         var dataFim = Console.ReadLine();
@@ -119,14 +124,13 @@ class Program
             paragrafo2.Append("Data Inicio: " + dataInicio + "\r\n\r\n" + "Data Fim: " + dataFim).Font("Calibri").FontSize(14);
 
             document.InsertParagraph().InsertPageBreakAfterSelf();
-            var paragrafo3 = document.InsertParagraph("Sumario").Bold().FontSize(16);
+            var paragrafo3 = document.InsertParagraph("Inserir o Sumario automático").Bold().FontSize(16);
             paragrafo3.Alignment = Xceed.Document.NET.Alignment.center;
 
             document.InsertParagraph().InsertPageBreakAfterSelf();
 
             foreach (var row in listaDadosWord)
             {
-
                 var titulo = document.InsertParagraph(row.Topico);
                 titulo.StyleId = "Heading1";
 
